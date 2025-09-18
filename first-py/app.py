@@ -13,3 +13,7 @@ store = [{
 @app.get("/stores")
 def getStore():
     return {"stores":store}
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
