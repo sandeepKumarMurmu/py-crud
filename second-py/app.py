@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify
+import jwt, datetime
 
+MY_SECRETE = "mysecrete"
 app = Flask(__name__)
 
 users = [
@@ -33,12 +35,22 @@ def signup():
 
     if email in emails:
         return jsonify({"message":f"User already available with email {email}"}), 400
+    
+    payload = { 
+        "username": data.get("username"),
+        "email": data.get("email"),
+        "password": data.get("password")
+        }
+    
+    users.append(payload)
 
+    token = jwt.encode({**payload, "exp":datetime.datetime.now() + datetime.timedelta(hours=1)}, MY_SECRETE, algorithm="HS256")
+    print(token)
     return jsonify({
         "message": "User registered.",
         "data": {
-            "email": data.get("email"),
-            "password": data.get("password")
+            "token": token,
+            "email": data.get("email")
         }
     }), 200
 
